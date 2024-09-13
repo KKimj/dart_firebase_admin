@@ -300,11 +300,12 @@ class DecodedIdToken {
     required this.phoneNumber,
     required this.picture,
     required this.sub,
-    required this.uid,
+    this.uid,
   });
 
   @internal
   factory DecodedIdToken.fromMap(Map<String, Object?> map) {
+    final firebaseMap = Map<String, Object?>.from(map['firebase']! as Map);
     return DecodedIdToken(
       aud: map['aud']! as String,
       authTime: DateTime.fromMillisecondsSinceEpoch(
@@ -314,18 +315,19 @@ class DecodedIdToken {
       emailVerified: map['email_verified'] as bool?,
       exp: map['exp']! as int,
       firebase: TokenProvider(
-        identities: Map.from(map['firebase']! as Map),
-        signInProvider: map['sign_in_provider']! as String,
-        signInSecondFactor: map['sign_in_second_factor'] as String?,
-        secondFactorIdentifier: map['second_factor_identifier'] as String?,
-        tenant: map['tenant'] as String?,
+        identities: firebaseMap,
+        signInProvider: firebaseMap['sign_in_provider']! as String,
+        signInSecondFactor: firebaseMap['sign_in_second_factor'] as String?,
+        secondFactorIdentifier:
+            firebaseMap['second_factor_identifier'] as String?,
+        tenant: firebaseMap['tenant'] as String?,
       ),
       iat: map['iat']! as int,
       iss: map['iss']! as String,
       phoneNumber: map['phone_number'] as String?,
       picture: map['picture'] as String?,
       sub: map['sub']! as String,
-      uid: map['uid']! as String,
+      uid: map['uid'] != null ? map['uid']! as String : null,
     );
   }
 
@@ -398,7 +400,7 @@ class DecodedIdToken {
   ///
   /// This value is not actually in the JWT token claims itself. It is added as a
   /// convenience, and is set as the value of the [`sub`](#sub) property.
-  String uid;
+  String? uid;
 
   /**
    * Other arbitrary claims included in the ID token.
